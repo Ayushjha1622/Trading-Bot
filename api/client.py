@@ -1,5 +1,12 @@
 from httpx import Client
 from typing import Any
+from core.logger import logger
+
+logger.info("Connecting to Binance")
+
+logger.debug("Sending GET request")
+
+logger.error("Authentication failed")
 
 
 class APIClient:

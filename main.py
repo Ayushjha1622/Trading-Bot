@@ -1,14 +1,12 @@
-from api.binance import BinanceClient
-from config import settings
+from core.logger import logger
 
 
 def main():
-    client = BinanceClient(settings.base_url)
+    logger.info("Application started")
+    logger.warning("This is a warning")
+    logger.error("This is an error")
 
-    data = client.test_connection()
-
-    print("✅ Connected Successfully")
-    print(data)
+    print("Logging initialized successfully.")
 
 
 if __name__ == "__main__":
