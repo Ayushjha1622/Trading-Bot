@@ -1,12 +1,14 @@
-from core.logger import Logger
-
-logger = Logger.get_logger(__name__)
+from api.client import HttpClient
+from api.endpoints import SERVER_TIME
 
 
 def main():
-    logger.info("Trading Bot Started")
-    logger.warning("This is a warning")
-    logger.error("This is an error")
+
+    client = HttpClient()
+
+    data = client.get(SERVER_TIME)
+
+    print(data)
 
 
 if __name__ == "__main__":

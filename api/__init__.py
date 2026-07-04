@@ -1,3 +1,3 @@
-from .binance import BinanceClient
+from .binance_client import BinanceClient
 
 __all__ = ["BinanceClient"]

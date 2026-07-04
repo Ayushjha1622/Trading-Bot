@@ -1,20 +1,70 @@
-from httpx import Client
-from typing import Any
-from core.logger import logger
+import httpx
 
-logger.info("Connecting to Binance")
+from core.config import settings
+from core.exceptions import APIException, NetworkException
+from core.logger import Logger
 
-logger.debug("Sending GET request")
-
-logger.error("Authentication failed")
+logger = Logger.get_logger(__name__)
 
 
-class APIClient:
-    def __init__(self, base_url: str, timeout: int = 10):
-        self.base_url = base_url
-        self.client = Client(base_url=base_url, timeout=timeout)
+class HttpClient:
 
-    def request(self, method: str, path: str, **kwargs: Any):
-        response = self.client.request(method, path, **kwargs)
-        response.raise_for_status()
-        return response.json()
+    def __init__(self):
+        self.client = httpx.Client(
+            base_url=settings.base_url,
+            timeout=settings.timeout,
+        )
+
+    def get(self, endpoint: str, **kwargs):
+        try:
+            logger.info(f"GET {endpoint}")
+
+            response = self.client.get(endpoint, **kwargs)
+
+            logger.info(f"Response Status : {response.status_code}")
+
+            response.raise_for_status()
+
+            return response.json()
+        except httpx.TimeoutException as exc:
+            logger.exception(exc)
+            raise NetworkException("Request timed out.") from exc
+        except httpx.HTTPStatusError as exc:
+            logger.exception(exc)
+            raise APIException(exc.response.text) from exc
+
+    def post(self, endpoint: str, **kwargs):
+        try:
+            logger.info(f"POST {endpoint}")
+
+            response = self.client.post(endpoint, **kwargs)
+
+            logger.info(f"Response Status : {response.status_code}")
+
+            response.raise_for_status()
+
+            return response.json()
+        except httpx.TimeoutException as exc:
+            logger.exception(exc)
+            raise NetworkException("Request timed out.") from exc
+        except httpx.HTTPStatusError as exc:
+            logger.exception(exc)
+            raise APIException(exc.response.text) from exc
+
+    def delete(self, endpoint: str, **kwargs):
+        try:
+            logger.info(f"DELETE {endpoint}")
+
+            response = self.client.delete(endpoint, **kwargs)
+
+            logger.info(f"Response Status : {response.status_code}")
+
+            response.raise_for_status()
+
+            return response.json()
+        except httpx.TimeoutException as exc:
+            logger.exception(exc)
+            raise NetworkException("Request timed out.") from exc
+        except httpx.HTTPStatusError as exc:
+            logger.exception(exc)
+            raise APIException(exc.response.text) from exc

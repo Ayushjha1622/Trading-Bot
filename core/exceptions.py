@@ -1,18 +1,18 @@
-class TradingBotError(Exception):
-    """Base exception for the application."""
+class TradingBotException(Exception):
+    """Base exception."""
 
 
-class ConfigurationError(TradingBotError):
-    pass
+class ConfigurationException(TradingBotException):
+    """Configuration related errors."""
 
 
-class AuthenticationError(TradingBotError):
-    pass
+class AuthenticationException(TradingBotException):
+    """Authentication failures."""
 
 
-class BinanceAPIError(TradingBotError):
-    pass
+class APIException(TradingBotException):
+    """API returned an error."""
 
 
-class ValidationError(TradingBotError):
-    pass
+class NetworkException(TradingBotException):
+    """Network or timeout error."""

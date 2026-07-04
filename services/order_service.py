@@ -1,4 +1,4 @@
-from api.binance import BinanceClient
+from api.binance_client import BinanceClient
 from models.order import OrderRequest, OrderResponse
 
 
