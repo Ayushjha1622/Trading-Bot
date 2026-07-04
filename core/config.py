@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     secret_key: str = Field(..., alias="BINANCE_SECRET_KEY")
 
     base_url: str = Field(
-        "https://testnet.binancefuture.com",
+        default="https://testnet.binancefuture.com",
         alias="BINANCE_BASE_URL",
     )
 
@@ -31,10 +31,13 @@ class Settings(BaseSettings):
     # Logging
     # -----------------------
 
-    log_level: str = Field("INFO", alias="LOG_LEVEL")
+    log_level: str = Field(
+        default="INFO",
+        alias="LOG_LEVEL",
+    )
 
     log_file: str = Field(
-        "logs/trading.log",
+        default="logs/trading.log",
         alias="LOG_FILE",
     )
 
@@ -43,19 +46,19 @@ class Settings(BaseSettings):
     # -----------------------
 
     timeout: int = Field(
-        10,
+        default=10,
         alias="TIMEOUT",
     )
 
     # -----------------------
-    # Pydantic Configuration
+    # Pydantic Settings
     # -----------------------
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore",
         case_sensitive=False,
+        extra="ignore",
     )
 
 
