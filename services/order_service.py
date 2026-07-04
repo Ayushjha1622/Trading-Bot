@@ -1,11 +1,29 @@
 from api.binance_client import BinanceClient
-from models.order import OrderRequest, OrderResponse
+from models.enums import OrderType
+from models.order import OrderRequest
+from validators import OrderValidator
 
 
 class OrderService:
-    def __init__(self, client: BinanceClient):
-        self.client = client
 
-    def place_order(self, order: OrderRequest) -> OrderResponse:
-        data = self.client.place_order(order)
-        return OrderResponse(**data)
+    def __init__(self):
+
+        self.client = BinanceClient()
+
+    def place_order(self, order: OrderRequest):
+
+        OrderValidator.validate(order)
+
+        payload = {
+            "symbol": order.symbol,
+            "side": order.side.value,
+            "type": order.order_type.value,
+            "quantity": order.quantity,
+        }
+
+        if order.order_type == OrderType.LIMIT:
+
+            payload["price"] = order.price
+            payload["timeInForce"] = order.time_in_force.value
+
+        return self.client.place_order(payload)

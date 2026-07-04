@@ -21,9 +21,15 @@ class BinanceAuth:
     def sign(params: dict) -> dict:
         signed = params.copy()
         signed["timestamp"] = int(time.time() * 1000)
-        signed["signature"] = BinanceAuth.generate_signature(signed)
+        signed["signature"] = BinanceAuth.generate_signature(
+            {k: v for k, v in signed.items() if k != "signature"}
+        )
         return signed
 
     @staticmethod
     def headers() -> dict:
-        return {"X-MBX-APIKEY": settings.api_key}
+        return {
+            "X-MBX-APIKEY": settings.api_key,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+        }

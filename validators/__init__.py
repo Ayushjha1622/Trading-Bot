@@ -1,3 +1,3 @@
-from .order_validator import validate_order
+from .order_validator import OrderValidator
 
-__all__ = ["validate_order"]
+__all__ = ["OrderValidator"]

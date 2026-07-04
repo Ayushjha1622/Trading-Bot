@@ -17,6 +17,9 @@ class HttpClient:
     def _request(self, method: str, endpoint: str, **kwargs):
         try:
             logger.info("%s %s", method, endpoint)
+            logger.info("Headers : %s", kwargs.get("headers"))
+            logger.info("Params  : %s", kwargs.get("params"))
+            logger.info("Data    : %s", kwargs.get("data"))
 
             response = self.client.request(
                 method=method,

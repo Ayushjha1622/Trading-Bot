@@ -22,11 +22,22 @@ class BinanceClient:
             headers=BinanceAuth.headers(),
         )
 
-    def place_order(self, order: OrderRequest):
-        params = BinanceAuth.sign(order.model_dump(exclude_none=True))
+    def place_order(self, params: dict):
+        signed_params = BinanceAuth.sign(params)
         return self.http.post(
+            ORDER,
+            data=signed_params,
+            headers=BinanceAuth.headers(),
+        )
+
+    def get_order(self, symbol: str, order_id: int):
+        params = BinanceAuth.sign({
+            "symbol": symbol,
+            "orderId": order_id,
+        })
+        return self.http.get(
             ORDER,
             params=params,
             headers=BinanceAuth.headers(),
-            json=order.model_dump(exclude_none=True),
         )
+    
