@@ -1,10 +1,5 @@
-from api.binance_client import BinanceClient
+from cli import main
 
-client = BinanceClient()
 
-response = client.get_order(
-    "BTCUSDT",
-    18969988068
-)
-
-print(response)
+if __name__ == "__main__":
+    main()

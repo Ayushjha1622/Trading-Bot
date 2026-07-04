@@ -1,7 +1,6 @@
 from api.auth import BinanceAuth
 from api.client import HttpClient
-from api.endpoints import ACCOUNT, EXCHANGE_INFO, ORDER, SERVER_TIME
-from models.order import OrderRequest
+from api.endpoints import ACCOUNT, EXCHANGE_INFO, OPEN_ORDERS, ORDER, SERVER_TIME
 
 
 class BinanceClient:
@@ -36,6 +35,25 @@ class BinanceClient:
             "orderId": order_id,
         })
         return self.http.get(
+            ORDER,
+            params=params,
+            headers=BinanceAuth.headers(),
+        )
+
+    def get_open_orders(self, symbol: str | None = None):
+        params = BinanceAuth.sign({"symbol": symbol} if symbol else {})
+        return self.http.get(
+            OPEN_ORDERS,
+            params=params,
+            headers=BinanceAuth.headers(),
+        )
+
+    def cancel_order(self, symbol: str, order_id: int):
+        params = BinanceAuth.sign({
+            "symbol": symbol,
+            "orderId": order_id,
+        })
+        return self.http.delete(
             ORDER,
             params=params,
             headers=BinanceAuth.headers(),

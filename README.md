@@ -37,6 +37,17 @@ trading_bot/
 └── main.py                # Entry point
 ```
 
+## Architecture
+
+```mermaid
+graph TD
+    A[CLI] --> B[Order Service]
+    B --> C[Order Validator]
+    C --> D[Binance Client]
+    D --> E[HTTP Client]
+    E --> F[Binance Futures Testnet API]
+```
+
 ## Requirements
 
 - Python 3.8+

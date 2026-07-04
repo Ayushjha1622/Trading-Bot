@@ -1,3 +1,5 @@
+import time
+
 import httpx
 
 from core.config import settings
@@ -15,31 +17,38 @@ class HttpClient:
         )
 
     def _request(self, method: str, endpoint: str, **kwargs):
-        try:
-            logger.info("%s %s", method, endpoint)
-            logger.info("Headers : %s", kwargs.get("headers"))
-            logger.info("Params  : %s", kwargs.get("params"))
-            logger.info("Data    : %s", kwargs.get("data"))
+        for attempt in range(3):
+            try:
+                logger.info("%s %s", method, endpoint)
+                logger.info("Request Sent")
 
-            response = self.client.request(
-                method=method,
-                url=endpoint,
-                **kwargs,
-            )
+                response = self.client.request(
+                    method=method,
+                    url=endpoint,
+                    **kwargs,
+                )
 
-            logger.info("Response Status: %s", response.status_code)
+                logger.info("Status %s", response.status_code)
 
-            response.raise_for_status()
+                response.raise_for_status()
 
-            return response.json()
+                return response.json()
 
-        except httpx.TimeoutException as exc:
-            logger.exception("Request timed out")
-            raise NetworkException("Request timed out") from exc
+            except httpx.TimeoutException as exc:
+                logger.exception("Request timed out")
+                raise NetworkException("Request timed out") from exc
 
-        except httpx.HTTPStatusError as exc:
-            logger.exception(exc.response.text)
-            raise APIException(exc.response.text) from exc
+            except httpx.HTTPStatusError as exc:
+                logger.exception("Request failed")
+                if exc.response.status_code >= 500 and attempt < 2:
+                    logger.warning("Retrying request after server error (attempt %s/3)", attempt + 1)
+                    time.sleep(2)
+                    continue
+                if exc.response.status_code >= 500:
+                    raise APIException(
+                        "Binance Testnet server is temporarily unavailable. Please try again."
+                    ) from exc
+                raise APIException(exc.response.text) from exc
 
     def get(self, endpoint: str, **kwargs):
         return self._request("GET", endpoint, **kwargs)

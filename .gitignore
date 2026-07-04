@@ -11,6 +11,13 @@ env/
 
 # Environment Variables
 .env
+.env.*
+!.env.example
+
+# Secrets and local configurations
+secrets.json
+config.local.json
+*.pem
 
 # Logs
 logs/
