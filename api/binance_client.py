@@ -1,11 +1,16 @@
-from .client import HttpClient
-from .endpoints import TIME
+from api.client import HttpClient
+from api.endpoints import (
+    SERVER_TIME,
+    EXCHANGE_INFO,
+)
 
 
-class BinanceClient(HttpClient):
-    def __init__(self, base_url: str):
-        super().__init__()
-        self.client.base_url = base_url
+class BinanceClient:
+    def __init__(self):
+        self.http = HttpClient()
 
-    def test_connection(self):
-        return self.get(TIME)
+    def get_server_time(self):
+        return self.http.get(SERVER_TIME)
+
+    def get_exchange_info(self):
+        return self.http.get(EXCHANGE_INFO)

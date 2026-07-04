@@ -1,14 +1,12 @@
-from api.client import HttpClient
-from api.endpoints import SERVER_TIME
+from api.binance_client import BinanceClient
 
 
 def main():
+    client = BinanceClient()
 
-    client = HttpClient()
+    exchange = client.get_exchange_info()
 
-    data = client.get(SERVER_TIME)
-
-    print(data)
+    print(exchange.keys())
 
 
 if __name__ == "__main__":
