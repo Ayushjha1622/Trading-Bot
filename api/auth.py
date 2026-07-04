@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import time
 from urllib.parse import urlencode
 
 from core.config import settings
@@ -10,10 +11,19 @@ class BinanceAuth:
     def generate_signature(params: dict) -> str:
         query_string = urlencode(params)
 
-        signature = hmac.new(
+        return hmac.new(
             settings.secret_key.encode("utf-8"),
             query_string.encode("utf-8"),
             hashlib.sha256,
         ).hexdigest()
 
-        return signature
+    @staticmethod
+    def sign(params: dict) -> dict:
+        signed = params.copy()
+        signed["timestamp"] = int(time.time() * 1000)
+        signed["signature"] = BinanceAuth.generate_signature(signed)
+        return signed
+
+    @staticmethod
+    def headers() -> dict:
+        return {"X-MBX-APIKEY": settings.api_key}

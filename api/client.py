@@ -35,7 +35,7 @@ class HttpClient:
             raise NetworkException("Request timed out") from exc
 
         except httpx.HTTPStatusError as exc:
-            logger.exception("HTTP error")
+            logger.exception(exc.response.text)
             raise APIException(exc.response.text) from exc
 
     def get(self, endpoint: str, **kwargs):

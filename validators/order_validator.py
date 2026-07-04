@@ -1,14 +1,31 @@
 from models.order import OrderRequest
-from typing import Dict, Any
+from models.enums import OrderType
 
 
-def validate_order(payload: Dict[str, Any]) -> OrderRequest:
-    order = OrderRequest(**payload)
+class OrderValidator:
 
-    if order.side not in {"BUY", "SELL"}:
-        raise ValueError("side must be BUY or SELL")
+    @staticmethod
+    def validate(order: OrderRequest):
 
-    if order.type not in {"MARKET", "LIMIT", "STOP_LOSS", "TAKE_PROFIT"}:
-        raise ValueError("type is not supported")
+        if order.quantity <= 0:
+            raise ValueError(
+                "Quantity must be greater than zero."
+            )
 
-    return order
+        if (
+            order.order_type == OrderType.LIMIT
+            and order.price is None
+        ):
+            raise ValueError(
+                "LIMIT order requires a price."
+            )
+
+        if (
+            order.order_type == OrderType.MARKET
+            and order.price is not None
+        ):
+            raise ValueError(
+                "MARKET order should not include a price."
+            )
+
+        return True

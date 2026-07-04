@@ -1,21 +1,39 @@
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel, Field, model_validator
+
+from models.enums import (
+    OrderSide,
+    OrderType,
+    TimeInForce,
+)
 
 
 class OrderRequest(BaseModel):
+
     symbol: str
-    side: str
-    type: str
-    quantity: float
+
+    side: OrderSide
+
+    order_type: OrderType
+
+    quantity: float = Field(gt=0)
+
     price: Optional[float] = None
-    stop_price: Optional[float] = None
 
+    time_in_force: TimeInForce = TimeInForce.GTC
 
-class OrderResponse(BaseModel):
-    order_id: int
-    symbol: str
-    side: str
-    type: str
-    quantity: float
-    status: str
-    timestamp: int
+    @model_validator(mode="after")
+    def validate_order(self):
+
+        if self.order_type == OrderType.LIMIT and self.price is None:
+            raise ValueError(
+                "Price is required for LIMIT orders."
+            )
+
+        if self.order_type == OrderType.MARKET and self.price is not None:
+            raise ValueError(
+                "Price should not be provided for MARKET orders."
+            )
+
+        return self

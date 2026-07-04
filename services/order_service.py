@@ -7,9 +7,5 @@ class OrderService:
         self.client = client
 
     def place_order(self, order: OrderRequest) -> OrderResponse:
-        data = self.client.request(
-            "POST",
-            "/fapi/v1/order",
-            json=order.model_dump(exclude_none=True),
-        )
+        data = self.client.place_order(order)
         return OrderResponse(**data)
